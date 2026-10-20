@@ -1,144 +1,40 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CTF Reto 8: Inyección de Campos</title>
-    <!-- Carga de Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        /* Estilos idénticos a retos anteriores para consistencia visual */
-        body {
-            font-family: 'Roboto Mono', monospace;
-            background-color: #0d1117; 
-            color: #00ff00; 
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .container {
-            border: 1px solid #00ff0033; 
-            box-shadow: 0 0 20px #00ff0044; 
-        }
-        .terminal-header {
-            background-color: #161b22;
-            color: #ffffff;
-            font-weight: bold;
-            border-bottom: 1px solid #00ff0033;
-        }
-        .message-box {
-            min-height: 4rem; 
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El buscador sin filtros · CÓDIGO CAOS</title>
+<link rel="icon" href="icono.png">
+<script>
+  // Tema antes de pintar, para que no parpadee
+  (function(){var t=null;try{t=localStorage.getItem('cc-theme');}catch(e){}
+  if(!t)t=(window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark';
+  document.documentElement.setAttribute('data-theme',t);})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/cc.css">
 </head>
-<body class="p-4">
-    <div class="container w-full max-w-lg p-6 md:p-8 rounded-lg">
-        <div class="terminal-header p-2 rounded-t-lg flex justify-between items-center">
-            <span>Reto_8.exe - XSS Básico</span>
-            <div class="space-x-1">
-                <span class="inline-block w-3 h-3 bg-red-500 rounded-full"></span>
-                <span class="inline-block w-3 h-3 bg-yellow-500 rounded-full"></span>
-                <span class="inline-block w-3 h-3 bg-green-500 rounded-full"></span>
-            </div>
-        </div>
-
-        <div class="p-6">
-            <h1 class="text-3xl font-bold mb-4 text-white">RETO 8: El Buscador sin Filtros</h1>
-            <p class="mb-6 text-gray-300">
-                Esta aplicación tiene una función de búsqueda muy simple. Para ayudar al usuario, muestra exactamente lo que se ha buscado en el cuerpo de la página. Lamentablemente, no hemos filtrado los caracteres especiales.
-            </p>
-
-            <p class="mb-6 text-cyan-300">
-                Tu misión: La bandera ha sido guardada en una variable JavaScript global llamada <code class="text-yellow-300">window.secretFlag8</code>. Descubre cómo inyectar código en el campo de búsqueda para que el valor de esa variable se muestre en la página y puedas copiarla.
-            </p>
-
-            <!-- Campo de búsqueda vulnerable -->
-            <div class="mt-6">
-                <label for="searchInput" class="block text-sm font-medium mb-2 text-cyan-300">Campo de Búsqueda:</label>
-                <input type="text" id="searchInput" placeholder="Escribe algo y pulsa Buscar..." 
-                       class="w-full p-3 rounded bg-gray-800 text-yellow-300 border border-gray-700 focus:ring-green-500 focus:border-green-500" 
-                       autocomplete="off">
-            </div>
-
-            <button onclick="performSearch()" 
-                    class="mt-4 w-full bg-green-700 hover:bg-green-600 text-white font-bold py-3 px-4 rounded transition-colors duration-200">
-                Buscar (Vulnerable)
-            </button>
-
-            <!-- Área donde se inyecta el contenido sin sanitizar -->
-            <div class="mt-8 p-3 rounded bg-gray-900 border border-gray-700">
-                <p class="text-sm text-white font-bold">Resultado de la Búsqueda:</p>
-                <div id="resultOutput" class="text-red-400 font-semibold mt-2 break-all">
-                    <!-- Aquí se inyecta el texto sin filtrar -->
-                </div>
-            </div>
-
-            <!-- Entrada para introducir la bandera después de encontrarla -->
-            <div class="mt-6">
-                <label for="flagInput" class="block text-sm font-medium mb-2 text-cyan-300">Introduce la Bandera Encontrada:</label>
-                <input type="text" id="flagInput" placeholder="FLAG{...}" 
-                       class="w-full p-3 rounded bg-gray-800 text-yellow-300 border border-gray-700 focus:ring-green-500 focus:border-green-500" 
-                       autocomplete="off">
-            </div>
-
-            <button onclick="checkFlag()" 
-                    class="mt-4 w-full bg-purple-700 hover:bg-purple-600 text-white font-bold py-3 px-4 rounded transition-colors duration-200">
-                Verificar Bandera y Continuar
-            </button>
-
-            <div id="message" class="message-box mt-4 p-3 rounded text-center text-sm font-semibold transition-all">
-                &nbsp;
-            </div>
-
-            <div class="mt-6 text-center">
-                <a href="index.html" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Volver al Índice</a>
-            </div>
-        </div>
+<body data-reto="8">
+<div id="cc-header"></div>
+<main>
+  <div id="cc-top"></div>
+  <div class="term">
+    <div class="term-bar" id="cc-bar"></div>
+    <div class="term-body">
+      <h1><span class="pre">&gt;</span> <span data-i18n="title">El buscador sin filtros</span></h1>
+      <div data-i18n-html="story"></div>
+      <form id="searchForm" autocomplete="off">
+        <label class="field"><span data-i18n="searchLbl"></span><input id="searchInput" spellcheck="false"></label>
+        <button type="submit" class="btn" style="margin-top:14px" data-i18n="searchBtn"></button>
+      </form>
+      <div class="stage"><span class="lbl" data-i18n="resultLbl"></span><div id="resultOutput"></div></div>
+      <div id="cc-flag"></div>
     </div>
-
-    <script>
-        // La bandera que el atacante debe revelar
-        window.secretFlag8 = "FLAG{INYECCION_DE_SCRIPT_XSS_8}"; 
-        const FINAL_FLAG = window.secretFlag8; 
-
-        const MESSAGE_BOX = document.getElementById('message');
-        const RESULT_OUTPUT = document.getElementById('resultOutput');
-        
-        // Simulación: Esta función toma la entrada del usuario y la inyecta directamente
-        // en el HTML (usando innerHTML), haciéndola vulnerable a XSS.
-        function performSearch() {
-            const searchInput = document.getElementById('searchInput').value;
-            
-            // ¡VULNERABLE! Inyecta la entrada del usuario directamente
-            RESULT_OUTPUT.innerHTML = "Búsqueda por: " + searchInput;
-            
-            MESSAGE_BOX.textContent = "El resultado se ha inyectado en el área de arriba. ¿Se ejecutó algún script?";
-            MESSAGE_BOX.className = 'message-box mt-4 p-3 rounded text-center text-sm font-semibold bg-gray-700 text-white transition-all';
-        }
-
-        async function checkFlag() {
-            const input = document.getElementById('flagInput').value.trim();
-            
-            MESSAGE_BOX.textContent = "Comprobando...";
-            MESSAGE_BOX.className = 'message-box mt-4 p-3 rounded text-center text-sm font-semibold bg-gray-700 text-white transition-all';
-            
-            await new Promise(resolve => setTimeout(resolve, 500)); 
-
-            if (input === FINAL_FLAG) {
-                MESSAGE_BOX.textContent = "¡VERIFICACIÓN COMPLETA! Acceso concedido al Reto 9.";
-                MESSAGE_BOX.className = 'message-box mt-4 p-3 rounded text-center text-sm font-semibold bg-green-900 text-green-300 shadow-lg shadow-green-900/50';
-                
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                
-                // Redirigir al siguiente reto (debes crear reto9.html)
-                window.location.href = "reto9.html"; 
-            } else {
-                 MESSAGE_BOX.textContent = "Bandera Incorrecta. Asegúrate de inyectar el script correctamente para revelar el valor de 'window.secretFlag8'.";
-                 MESSAGE_BOX.className = 'message-box mt-4 p-3 rounded text-center text-sm font-semibold bg-red-900 text-red-300 shadow-lg shadow-red-900/50';
-            }
-        }
-    </script>
+  </div>
+</main>
+<div id="cc-footer"></div>
+<script src="assets/cc.js"></script>
+<script src="js/reto8.js"></script>
 </body>
 </html>
