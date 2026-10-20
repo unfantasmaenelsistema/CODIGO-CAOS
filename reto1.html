@@ -1,126 +1,48 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CTF Reto 1: Inspección Básica</title>
-    <!-- Carga de Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        /* Estilos idénticos al index.html para consistencia visual */
-        body {
-            font-family: 'Roboto Mono', monospace;
-            background-color: #0d1117; 
-            color: #00ff00; 
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .container {
-            border: 1px solid #00ff0033; 
-            box-shadow: 0 0 20px #00ff0044; 
-        }
-        .terminal-header {
-            background-color: #161b22;
-            color: #ffffff;
-            font-weight: bold;
-            border-bottom: 1px solid #00ff0033;
-        }
-        /* Clase para el mensaje de retroalimentación */
-        .message-box {
-            min-height: 4rem; /* Altura mínima para evitar CLS */
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La cortina · CÓDIGO CAOS</title>
+<link rel="icon" href="icono.png">
+<script>
+  // Tema antes de pintar, para que no parpadee
+  (function(){var t=null;try{t=localStorage.getItem('cc-theme');}catch(e){}
+  if(!t)t=(window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark';
+  document.documentElement.setAttribute('data-theme',t);})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/cc.css">
 </head>
-<body class="p-4">
-    <!-- 
-        ========================================================
-        |              INSPECCIÓN DE CÓDIGO FUENTE             |
-        |                                                      |
-        | ¡Bienvenido al primer desafío! Es más simple de lo    |
-        | que piensas. La bandera para pasar al Reto 2 es:      |
-        |                                                      |
-        | FLAG{Mira_Detras_Del_Telon_1}                         |
-        |                                                      |
-        | ¿Quién necesita un backend cuando tienes comentarios?  |
-        ========================================================
-    -->
-    <div class="container w-full max-w-lg p-6 md:p-8 rounded-lg">
-        <div class="terminal-header p-2 rounded-t-lg flex justify-between items-center">
-            <span>Reto_1.exe - Inspección</span>
-            <div class="space-x-1">
-                <span class="inline-block w-3 h-3 bg-red-500 rounded-full"></span>
-                <span class="inline-block w-3 h-3 bg-yellow-500 rounded-full"></span>
-                <span class="inline-block w-3 h-3 bg-green-500 rounded-full"></span>
-            </div>
-        </div>
-
-        <div class="p-6">
-            <h1 class="text-3xl font-bold mb-4 text-white">RETO 1: La Cortina</h1>
-            <p class="mb-6 text-gray-300">
-                Tu primera tarea es demostrar que puedes ver más allá de la interfaz. La bandera está en esta misma página, pero no está visible. ¿Dónde suelen esconderse las notas que un desarrollador olvida eliminar?
-            </p>
-
-            <div class="mt-6">
-                <label for="flagInput" class="block text-sm font-medium mb-2 text-cyan-300">Introduce la Bandera (Flag):</label>
-                <input type="text" id="flagInput" placeholder="FLAG{...}" 
-                       class="w-full p-3 rounded bg-gray-800 text-yellow-300 border border-gray-700 focus:ring-green-500 focus:border-green-500" 
-                       autocomplete="off">
-            </div>
-
-            <button onclick="submitFlag()" 
-                    class="mt-4 w-full bg-green-700 hover:bg-green-600 text-white font-bold py-3 px-4 rounded transition-colors duration-200">
-                Verificar y Continuar
-            </button>
-
-            <!-- Mensaje de Retroalimentación -->
-            <div id="message" class="message-box mt-4 p-3 rounded text-center text-sm font-semibold transition-all">
-                &nbsp;
-            </div>
-
-            <div class="mt-6 text-center">
-                <a href="index.html" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Volver al Índice</a>
-            </div>
-        </div>
+<body data-reto="1">
+<!--
+    ========================================================
+    |              INSPECCIÓN DE CÓDIGO FUENTE             |
+    |                                                      |
+    | ¡Bienvenido al primer desafío! Es más simple de lo   |
+    | que piensas. La bandera para pasar al Reto 2 es:     |
+    |                                                      |
+    | FLAG{Mira_Detras_Del_Telon_1}                        |
+    |                                                      |
+    | ¿Quién necesita un backend cuando tienes comentarios?|
+    ========================================================
+-->
+<div id="cc-header"></div>
+<main>
+  <div id="cc-top"></div>
+  <div class="term">
+    <div class="term-bar" id="cc-bar"></div>
+    <div class="term-body">
+      <h1><span class="pre">&gt;</span> <span data-i18n="title">La cortina</span></h1>
+      <div data-i18n-html="story"></div>
+      
+      <div id="cc-flag"></div>
     </div>
-
-    <script>
-        // La bandera correcta. Oculta de la vista, pero no del código fuente.
-        const CORRECT_FLAG = "FLAG{Mira_Detras_Del_Telon_1}";
-        const MESSAGE_BOX = document.getElementById('message');
-
-        /**
-         * Realiza una pausa usando Promises para efectos visuales.
-         * @param {number} ms - Milisegundos a esperar.
-         */
-        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-        /**
-         * Verifica la bandera introducida por el usuario.
-         */
-        async function submitFlag() {
-            const input = document.getElementById('flagInput').value.trim();
-            MESSAGE_BOX.textContent = "Verificando...";
-            MESSAGE_BOX.className = 'message-box mt-4 p-3 rounded text-center text-sm font-semibold bg-gray-700 text-white transition-all';
-            
-            await sleep(500); // Pequeña pausa para simular procesamiento
-
-            if (input === CORRECT_FLAG) {
-                // Éxito: Mostrar mensaje y redirigir
-                MESSAGE_BOX.textContent = "¡Bandera Correcta! Acceso concedido.";
-                MESSAGE_BOX.className = 'message-box mt-4 p-3 rounded text-center text-sm font-semibold bg-green-900 text-green-300 shadow-lg shadow-green-900/50';
-                
-                await sleep(1500);
-                
-                // Redirigir al siguiente reto (debes crear reto2.html)
-                window.location.href = "reto2.html"; 
-            } else {
-                // Fallo: Mostrar mensaje de error
-                MESSAGE_BOX.textContent = "Bandera Incorrecta. Inténtalo de nuevo.";
-                MESSAGE_BOX.className = 'message-box mt-4 p-3 rounded text-center text-sm font-semibold bg-red-900 text-red-300 shadow-lg shadow-red-900/50';
-                document.getElementById('flagInput').value = ''; // Limpiar campo
-            }
-        }
-    </script>
+  </div>
+</main>
+<div id="cc-footer"></div>
+<script src="assets/cc.js"></script>
+<script src="js/reto1.js"></script>
+</body>
+</html>

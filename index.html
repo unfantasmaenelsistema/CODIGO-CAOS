@@ -1,83 +1,113 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CTF - Desafío de Seguridad Informática</title>
-    <!-- Carga de Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        /* Estilo personalizado para el ambiente de CTF/Terminal */
-        body {
-            font-family: 'Roboto Mono', monospace;
-            background-color: #0d1117; /* Fondo oscuro (similar a GitHub dark) */
-            color: #00ff00; /* Texto verde neón */
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .container {
-            border: 1px solid #00ff0033; /* Borde sutil */
-            box-shadow: 0 0 20px #00ff0044; /* Sombra neón */
-        }
-        .terminal-header {
-            background-color: #161b22;
-            color: #ffffff;
-            font-weight: bold;
-            border-bottom: 1px solid #00ff0033;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CÓDIGO CAOS · CTF de seguridad web en el navegador</title>
+<meta name="description" content="CTF de 10 retos encadenados de seguridad web: código fuente, CSS, JavaScript, Base64, robots.txt, localStorage, inyección SQL, XSS, cookies y recursos olvidados. Todo en el navegador.">
+<link rel="icon" href="icono.png">
+<script>
+  // Tema antes de pintar, para que no parpadee
+  (function(){var t=null;try{t=localStorage.getItem('cc-theme');}catch(e){}
+  if(!t)t=(window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark';
+  document.documentElement.setAttribute('data-theme',t);})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/cc.css">
 </head>
-<body class="p-4">
-    <div class="container w-full max-w-4xl p-6 md:p-10 rounded-lg">
-        <!-- Encabezado de Terminal -->
-        <div class="terminal-header p-2 rounded-t-lg flex justify-between items-center">
-            <span>CTF_Security_Challenge_v1.0.exe</span>
-            <div class="space-x-1">
-                <span class="inline-block w-3 h-3 bg-red-500 rounded-full"></span>
-                <span class="inline-block w-3 h-3 bg-yellow-500 rounded-full"></span>
-                <span class="inline-block w-3 h-3 bg-green-500 rounded-full"></span>
-            </div>
+<body>
+<div id="cc-header"></div>
+<main>
+  <div class="term">
+    <div class="term-bar"><span>CTF_Security_Challenge_v2.0.exe</span><span class="dots"><i></i><i></i><i></i></span></div>
+    <div class="term-body">
+      <div class="hero">
+        <img src="icono.png" alt="Un Fantasma en el Sistema">
+        <div>
+          <h1><span class="pre">::</span> CÓDIGO CAOS <span class="pre">::</span></h1>
+          <p class="prompt" data-i18n="welcome"></p>
         </div>
+      </div>
 
-        <div class="p-6">
-            <h1 class="text-3xl font-bold mb-4 text-white">:: CÓDIGO CAOS ::</h1>
-            <p class="mb-6 text-yellow-300">
-                &gt; Bienvenid@, aspirante a cazador de vulnerabilidades.
-            </p>
+      <h2 data-i18n="rulesTitle"></h2>
+      <ul class="rules">
+        <li data-i18n-html="r1"></li>
+        <li data-i18n-html="r2"></li>
+        <li data-i18n-html="r3"></li>
+        <li data-i18n-html="r4"></li>
+      </ul>
 
-            <h2 class="text-xl font-bold mt-8 mb-3 text-cyan-300">Instrucciones de Misión</h2>
-            <ul class="list-disc list-inside space-y-2 text-sm text-gray-200 ml-4">
-                <li>El objetivo es simple: Encontrar la Bandera (Flag).</li>
-                <li>Cada reto (`retoN.html`) contiene una bandera oculta.</li>
-                <li>Una bandera tiene el formato: <code class="bg-gray-800 p-1 rounded text-red-400">FLAG{texto_secreto_aqui}</code>.</li>
-                <li>Deberás usar todas tus habilidades (inspección de código, decodificación, lógica, etc.) para revelar la bandera.</li>
-                <li>Una vez que tengas la bandera, introdúcela en el campo de envío para desbloquear el siguiente nivel.</li>
-                <li>¡No hay límite de tiempo, pero la red te observa!</li>
-            </ul>
+      <h2 data-i18n="statusTitle"></h2>
+      <div class="progress">
+        <div class="bar"><i id="progBar" style="width:0"></i></div>
+        <span id="progTxt"></span>
+        <button type="button" class="btn ghost" id="resetBtn" data-i18n="reset"></button>
+      </div>
+      <ul class="missions" id="missions"></ul>
 
-            <h2 class="text-xl font-bold mt-8 mb-3 text-cyan-300">Estado de los Retos</h2>
-            <div class="space-y-2">
-                <p class="text-lg">
-                    <span class="text-green-500">✅</span> Reto 1: <a href="reto1.html" class="underline hover:text-green-400 transition-colors">Iniciar Misión</a>
-                </p>
-                <!-- Links a los siguientes retos (inicialmente inactivos) -->
-                <p>
-                    <span class="text-yellow-500">🔒</span> Reto 2: Pendiente (Necesitas completar Reto 1)
-                </p>
-                <p>
-                    <span class="text-red-500">🚫</span> Reto 3-10: Bloqueados
-                </p>
-            </div>
-
-            <div class="mt-10 p-4 border border-gray-700 rounded-lg bg-gray-900">
-                <p class="text-sm text-center text-gray-400">
-                    &gt; Recuerda: En seguridad, lo que ves no siempre es lo que obtienes. ¡Buena suerte, Agente!
-                </p>
-            </div>
-        </div>
+      <div class="warn" data-i18n-html="warn"></div>
     </div>
+  </div>
+</main>
+<div id="cc-footer"></div>
+<script src="assets/cc.js"></script>
+<script>
+'use strict';
+var RETOS = [
+  { es: ['La cortina', 'Código fuente'], en: ['The curtain', 'Page source'] },
+  { es: ['El velo invisible', 'CSS / DOM'], en: ['The invisible veil', 'CSS / DOM'] },
+  { es: ['El algoritmo transparente', 'JavaScript'], en: ['The transparent algorithm', 'JavaScript'] },
+  { es: ['El código enmascarado', 'Codificación'], en: ['The masked code', 'Encoding'] },
+  { es: ['El mapa del sitio', 'Reconocimiento'], en: ['The site map', 'Reconnaissance'] },
+  { es: ['El engaño del navegador', 'localStorage'], en: ['The browser trick', 'localStorage'] },
+  { es: ['Inyección en el login', 'Inyección SQL'], en: ['Login injection', 'SQL injection'] },
+  { es: ['El buscador sin filtros', 'XSS'], en: ['The unfiltered search', 'XSS'] },
+  { es: ['El nivel VIP', 'Cookies'], en: ['The VIP level', 'Cookies'] },
+  { es: ['El último archivo', 'Reconocimiento'], en: ['The last file', 'Reconnaissance'] }
+];
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function render(l) {
+  var done = CC.solved();
+  document.getElementById('missions').innerHTML = RETOS.map(function (r, i) {
+    var n = i + 1, d = r[l], ok = done.indexOf(n) > -1, open = CC.unlocked(n);
+    var inner = '<span class="st">' + (ok ? '✅' : open ? '▶' : '🔒') + '</span><span class="num">' + CC.t('reto') + ' ' + n + '</span>' +
+      '<span class="ttl">' + esc(d[0]) + '</span><span class="tag">' + esc(d[1]) + '</span>';
+    if (!open) return '<li><span class="off" title="' + esc(CC.t('lockedTip').replace('{p}', n - 1)) + '">' + inner + '</span></li>';
+    return '<li><a href="reto' + n + '.html"' + (ok ? ' class="done"' : '') + '>' + inner + '</a></li>';
+  }).join('');
+  var k = done.filter(function (x) { return x >= 1 && x <= CC.total; }).length;
+  document.getElementById('progBar').style.width = (k / CC.total * 100) + '%';
+  document.getElementById('progTxt').textContent = CC.t('progress').replace('{n}', k).replace('{t}', CC.total);
+}
+CC.init({
+  es: {
+    docTitle: 'CTF de seguridad web en el navegador',
+    welcome: '> Bienvenid@, aspirante a cazador/a de vulnerabilidades.',
+    rulesTitle: 'Instrucciones de la misión',
+    r1: 'El objetivo es simple: encontrar la bandera (<i>flag</i>) de cada reto. Tiene el formato <code>FLAG{texto_secreto}</code>.',
+    r2: 'Usa todo lo que sepas: código fuente (<b>Ctrl+U</b>), herramientas de desarrollador (<b>F12</b>), consola, almacenamiento, inyecciones…',
+    r3: 'Al validar una bandera se desbloquea el reto siguiente. Tu progreso se guarda en este navegador.',
+    r4: 'Cada reto trae dos pistas y, al superarlo, explica la lección de seguridad real que hay detrás.',
+    statusTitle: 'Estado de los retos', progress: '{n} de {t} superados', reset: 'Reiniciar progreso',
+    lockedTip: 'Completa antes el reto {p}',
+    warn: 'Recuerda: en seguridad, lo que ves no siempre es lo que obtienes. Si te atascas, hay un <a href="https://github.com/unfantasmaenelsistema/CODIGO-CAOS/blob/main/writeup/WRITEUP.md" target="_blank" rel="noopener">writeup</a> con todas las soluciones (¡spoilers!). Practica estas técnicas solo aquí o en plataformas que lo permitan.'
+  },
+  en: {
+    docTitle: 'Web security CTF in your browser',
+    welcome: '> Welcome, aspiring vulnerability hunter.',
+    rulesTitle: 'Mission briefing',
+    r1: 'The goal is simple: find each challenge’s flag. It has the format <code>FLAG{secret_text}</code>.',
+    r2: 'Use everything you know: page source (<b>Ctrl+U</b>), developer tools (<b>F12</b>), the console, storage, injections…',
+    r3: 'Submitting a flag unlocks the next challenge. Your progress is saved in this browser.',
+    r4: 'Every challenge has two hints and, once solved, explains the real security lesson behind it. The challenges use Spanish names for variables, cookies and files.',
+    statusTitle: 'Challenge status', progress: '{n} of {t} solved', reset: 'Reset progress',
+    lockedTip: 'Finish challenge {p} first',
+    warn: 'Remember: in security, what you see is not always what you get. If you get stuck, there is a <a href="https://github.com/unfantasmaenelsistema/CODIGO-CAOS/blob/main/writeup/WRITEUP.md" target="_blank" rel="noopener">writeup</a> with every solution (spoilers!). Only practise these techniques here or on platforms that allow it.'
+  },
+  onLang: render
+});
+document.getElementById('resetBtn').addEventListener('click', function () { CC.resetProgress(); });
+</script>
 </body>
 </html>
